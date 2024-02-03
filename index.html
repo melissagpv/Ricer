@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      position: relative;
+      background-color: rgb(0, 14, 31);
+    }
+
+    .logo {
+    width: 40%;
+    height: 60%;
+    display: block;
+    margin: auto; 
+    margin-bottom: 30%;
+    opacity: 0.2;
+  }
+
+    .contenedor {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+    }
+
+   
+    .boton {
+        opacity: 0.7;
+      transition: opacity 0.3s ease, transform 0.3s ease, background-color 2s ease; /* Agregado transition para background-color */
+      z-index: 2;
+      width: 300px; 
+      height: 100px;
+      font-size: 25px; 
+      margin: 2%;
+      border-radius: 10px; 
+      border: 2px transparent; 
+      font-family: "Arial Black", Arial, sans-serif;
+      margin-bottom: -40%;
+    }
+
+    #boton1 {
+      background-color: #ccdeff;
+      color: #03000e;
+      
+      
+    }
+
+    #boton2 {
+      background-color: #ccdeff;
+      color: #03000e;
+    }
+
+    #boton3 {
+      background-color: #ccdeff;
+      color: #03000e;
+    }
+
+    .boton:hover {
+      opacity: 0.1;
+      transform: scale(1.2);
+    }
+
+    #boton1:hover {
+      background-color: #216dac; /* Color del botón al hacer hover */
+      color: #ccdeff;
+    }
+
+    #boton2:hover {
+        background-color: #216dac; /* Color del botón al hacer hover */
+      color: #ccdeff;
+    }
+
+    #boton3:hover {
+        background-color: #216dac; /* Color del botón al hacer hover */
+      color: #ccdeff;
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <div class="contenedor">
+    <img class="logo" src="logoricer.png" alt="">
+  </div>
+
+  <div class="contenedor">
+
+        <button id="boton1" class="boton" onclick="window.location.href='user.html'">CONTROL DE GASTOS</button>
+
+    <button id="boton2" class="boton" >CONTROL DE INVENTARIOS</button>
+    <button id="boton3" class="boton" onclick= "window.location.href='rentas.html'">CONTROL DE RENTAS</button>
+  </div>
+
+  <script>
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var botones = document.querySelectorAll(".boton");
+      botones.forEach(function(boton) {
+        boton.style.opacity = 0.8;
+      });
+    });
+  </script>
+
+</body>
+</html>

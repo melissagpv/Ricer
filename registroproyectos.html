@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de Proyectos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <img src="logoricer.png" alt="Descripción de la imagen" class="logo-ricer">
+
+    <div class="encabezado">
+        <button onclick="window.location.href='principal.html'">Inicio</button>    
+        <button onclick="window.location.href='Controldegastos.html'">Registro de Datos</button>
+        <button onclick="window.location.href='Consultadatos.html'">Consulta de datos</button>    
+    </div>
+
+    <div class="container-rdp">
+
+        <h2>Registro de Proyecto</h2>
+        <input type="text" id="nuevoProyectoInput" placeholder="Nombre del Proyecto">
+        <input type="date" id="fechaInicioInput" placeholder="Fecha de Inicio">
+        <input type="date" id="fechaFinInput" placeholder="Fecha de Fin">
+        <input type="number" id="costoInput" placeholder="Costo del Proyecto">
+        <button type="button" onclick="guardarProyecto()">Guardar Proyecto</button>
+        <button type="button" onclick="consultarProyectos()">Consultar Proyectos</button>
+                <div id="proyectosContainer"></div> 
+
+    </div>
+
+    <script src="script.js"></script>
+
+<script>
+  function guardarProyecto() {
+    var nuevoProyecto = document.getElementById("nuevoProyectoInput").value;
+    var fechaInicio = document.getElementById("fechaInicioInput").value;
+    var fechaFin = document.getElementById("fechaFinInput").value;
+    var costo = document.getElementById("costoInput").value;
+
+    if (nuevoProyecto.trim() !== '' && fechaInicio.trim() !== '' && fechaFin.trim() !== '' && costo.trim() !== '') {
+        actualizarProyectos(nuevoProyecto, fechaInicio, fechaFin, costo);
+        window.location.href = "principal.html"; 
+        alert('Por favor, completa todos los campos para guardar el proyecto.');
+    }
+}
+
+function actualizarProyectos(proyecto, fechaInicio, fechaFin, costo) {
+    var proyectosGuardados = localStorage.getItem("proyectos");
+    var proyectos = proyectosGuardados ? JSON.parse(proyectosGuardados) : [];
+    var nuevoProyecto = {
+        nombre: proyecto,
+        inicio: fechaInicio,
+        fin: fechaFin,
+        costo: costo
+    };
+    proyectos.push(nuevoProyecto);
+    localStorage.setItem("proyectos", JSON.stringify(proyectos));
+}
+
+function consultarProyectos() {
+    var proyectosGuardados = localStorage.getItem("proyectos");
+    var proyectos = proyectosGuardados ? JSON.parse(proyectosGuardados) : [];
+    var proyectosHTML = "<h3>Proyectos Registrados:</h3><ul>";
+    proyectos.forEach(function(proyecto) {
+        proyectosHTML += "<li><strong>Nombre:</strong> " + proyecto.nombre + 
+                         " | <strong>Fecha de Inicio:</strong> " + proyecto.inicio + 
+                         " | <strong>Fecha de Fin:</strong> " + proyecto.fin + 
+                         " | <strong>Costo:</strong> $" + proyecto.costo + "</li>";
+    });
+    proyectosHTML += "</ul>";
+    document.getElementById("proyectosContainer").innerHTML = proyectosHTML;
+}
+
+function cargarProyectosGuardados() {
+    var selectProyecto = document.getElementById("selectProyecto");
+    selectProyecto.innerHTML = '<option value="">Selecciona un Proyecto</option>'; 
+    var proyectosGuardados = localStorage.getItem("proyectos");
+    if (proyectosGuardados) {
+        var proyectos = JSON.parse(proyectosGuardados);
+        proyectos.forEach(function(proyecto) {
+            var option = document.createElement("option");
+            option.text = proyecto.nombre; // Aquí se usa solo el nombre del proyecto
+            selectProyecto.appendChild(option);
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    cargarProyectosGuardados();
+});
+
+    </script>
+    </body>
+    </html>

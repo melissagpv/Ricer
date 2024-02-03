@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentas de Equipos de Construcción</title>
+    <link rel="stylesheet" href="stylerenta.css">
+    <style>
+        .en-stock {
+            color: rgb(0, 77, 0);
+        }
+        .fuera-de-stock {
+            color: rgb(114, 3, 3);
+        }
+    </style>
+</head>
+<body>
+
+    <img src="ricernegro.png" alt="Descripción de la imagen" class="logo-ricer">
+
+    <header>
+        <h1>Rentas de Equipos de Construcción</h1>
+    </header>
+    <main>
+        <section id="registro">
+            <h2>Registro de Equipos</h2>
+            <form id="registroForm">
+                <label for="nombreEquipo">Nombre del Equipo:</label>
+                <input type="text" id="nombreEquipo" required>
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" id="cantidad" required>
+                <label for="precio">Precio de Renta por Día:</label>
+                <input type="number" id="precio" required>
+                <button type="submit" class="botonregistro">Registrar Equipo</button>
+            </form>
+        </section>
+        <section id="controlStock">
+            <h2>Control de Stock</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre del Equipo</th>
+                        <th>Cantidad Disponible</th>
+                        <th>Precio de Renta por Día</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="stockBody">
+                    <!-- Aquí se agregarán las filas dinámicamente -->
+                </tbody>
+            </table>
+        </section>
+        <section id="controlEntradasSalidas">
+            <h2>Control de Entradas y Salidas</h2>
+            <form id="agregarStockForm">
+                <label for="nombreEquipoAgregar">Nombre del Equipo:</label>
+                <select id="nombreEquipoAgregar" required></select>
+                <label for="cantidadAgregar">Cantidad a Agregar:</label>
+                <input type="number" id="cantidadAgregar" required>
+                <button type="submit">Agregar Stock</button>
+            </form>
+            <form id="restarStockForm">
+                <label for="nombreEquipoRestar">Nombre del Equipo:</label>
+                <select id="nombreEquipoRestar" required></select>
+                <label for="cantidadRestar">Cantidad a Restar:</label>
+                <input type="number" id="cantidadRestar" required>
+                <button type="submit">Restar Stock</button>
+            </form>
+        </section>
+        <section id="registroRentas">
+            <h2>Registro de Rentas</h2>
+            <form id="registroRentasForm">
+                <label for="nombreEquipoRenta">Nombre del Equipo:</label>
+                <select id="nombreEquipoRenta" required></select>
+                <label for="cantidadRenta">Cantidad Rentada:</label>
+                <input type="number" id="cantidadRenta" required>
+                <label for="montoRenta">Monto de la Renta:</label>
+                <input type="number" id="montoRenta" required>
+                <label for="fechaRenta">Fecha de Renta:</label>
+                <input type="date" id="fechaRenta" required>
+                <label for="nombrePersona">Nombre del Cliente:</label>
+                <input type="text" id="nombrePersona" required>
+                <button type="submit">Registrar Renta</button>
+            </form>
+        </section>
+        <section id="consultaDisponibilidad">
+            <h2>Consulta de Disponibilidad</h2>
+            <form id="consultaDisponibilidadForm">
+                <label for="nombreEquipoConsulta">Nombre del Equipo:</label>
+                <select id="nombreEquipoConsulta" required></select>
+                <label for="fechaConsulta">Fecha:</label>
+                <input type="date" id="fechaConsulta" required>
+                <button type="submit">Consultar Disponibilidad</button>
+            </form>
+            <p id="resultadoConsulta"></p>
+        </section>
+        <section id="historialRentas">
+            <h2>Historial de Rentas</h2>
+            <button id="consultarHistorialRentas">Consultar Historial de Rentas</button>
+            <button id="descargarExcelButton" onclick="descargarExcel()">Descargar Excel</button>
+            <div id="historialRentasContainer"></div>
+
+            <h3>Consultar por Mes</h3>
+            <form id="consultaPorMesForm">
+                <label for="mesConsulta">Mes:</label>
+                <select id="mesConsulta" required>
+                    <option value="0">Enero</option>
+                    <option value="1">Febrero</option>
+                    <!-- Agregar las opciones para los demás meses -->
+                </select>
+                <label for="añoConsulta">Año:</label>
+                <input type="number" id="añoConsulta" min="2000" max="2100" required>
+                <button type="submit">Consultar por Mes</button>
+            </form>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-analytics.js"></script>
+
+<script>
+  // Inicializa Firebase con tu configuración
+  const firebaseConfig = {
+    apiKey: "TU_API_KEY",
+    authDomain: "TU_AUTH_DOMAIN",
+    databaseURL: "TU_DATABASE_URL",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_STORAGE_BUCKET",
+    messagingSenderId: "TU_MESSAGING_SENDER_ID",
+    appId: "TU_APP_ID",
+    measurementId: "TU_MEASUREMENT_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  // A partir de aquí, puedes utilizar Firebase Database para almacenar y recuperar datos.
+</script>
+
+</body>
+</html>
+
+<script>
+
+function registrarEquipo(nombre, cantidad, precio) {
+    let equipos = obtenerEquiposLocalStorage();
+
+    const equipoExistente = equipos.find(equipo => equipo.nombre === nombre);
+
+    if (equipoExistente) {
+        equipoExistente.cantidad += parseInt(cantidad);
+        equipoExistente.precio = parseFloat(precio);
+    } else {
+        equipos.push({
+            nombre: nombre,
+            cantidad: parseInt(cantidad),
+            precio: parseFloat(precio)
+        });
+    }
+
+    guardarEquiposLocalStorage(equipos);
+
+    // Después de registrar un equipo, actualizamos la lista desplegable en la sección de "Registro de Rentas"
+    llenarListaDesplegable();
+}
+
+// Función para obtener los equipos almacenados en el localStorage
+function obtenerEquiposLocalStorage() {
+    const equiposString = localStorage.getItem('equipos');
+    return equiposString ? JSON.parse(equiposString) : [];
+}
+
+// Función para guardar los equipos en el localStorage
+function guardarEquiposLocalStorage(equipos) {
+    localStorage.setItem('equipos', JSON.stringify(equipos));
+}
+
+// Función para buscar un equipo por su nombre en la lista de equipos
+function buscarEquipo(nombre) {
+    const equipos = obtenerEquiposLocalStorage();
+    return equipos.find(equipo => equipo.nombre === nombre);
+}
+
+// Función para añadir stock a un equipo existente
+function agregarStock(nombre, cantidad) {
+    let equipos = obtenerEquiposLocalStorage();
+    const equipoIndex = equipos.findIndex(equipo => equipo.nombre === nombre);
+    if (equipoIndex !== -1) {
+        equipos[equipoIndex].cantidad += parseInt(cantidad);
+        guardarEquiposLocalStorage(equipos);
+        return true;
+    }
+    return false; // Equipo no encontrado
+}
+
+// Función para restar stock a un equipo existente
+function restarStock(nombre, cantidad) {
+    let equipos = obtenerEquiposLocalStorage();
+    const equipoIndex = equipos.findIndex(equipo => equipo.nombre === nombre);
+    if (equipoIndex !== -1 && equipos[equipoIndex].cantidad >= cantidad) {
+        equipos[equipoIndex].cantidad -= parseInt(cantidad);
+        guardarEquiposLocalStorage(equipos);
+        return true;
+    }
+    return false; // Equipo no encontrado o cantidad insuficiente
+}
+
+function actualizarTabla() {
+    const stockBody = document.getElementById('stockBody');
+    stockBody.innerHTML = '';
+
+    const equipos = obtenerEquiposLocalStorage();
+
+    equipos.forEach(equipo => {
+        const row = document.createElement('tr');
+        const estado = equipo.cantidad > 0 ? 'En Stock' : 'Fuera de Stock';
+        const estadoClass = equipo.cantidad > 0 ? 'en-stock' : 'fuera-de-stock';
+        row.innerHTML = `
+            <td>${equipo.nombre}</td>
+            <td>${equipo.cantidad}</td>
+            <td>${equipo.precio}</td>
+            <td class="${estadoClass}">${estado}</td>
+        `;
+        stockBody.appendChild(row);
+    });
+
+    llenarListaDesplegable(); // Llenar lista desplegable en control de entradas y salidas
+}
+
+// Evento para manejar el envío del formulario de registro
+document.getElementById('registroForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombreEquipo').value;
+    const cantidad = document.getElementById('cantidad').value;
+    const precio = document.getElementById('precio').value;
+
+    registrarEquipo(nombre, cantidad, precio);
+
+    actualizarTabla();
+
+    this.reset();
+});
+
+// Evento para manejar el envío del formulario de agregar stock
+document.getElementById('agregarStockForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombreEquipoAgregar').value;
+    const cantidad = document.getElementById('cantidadAgregar').value;
+
+    const exito = agregarStock(nombre, cantidad);
+
+    if (exito) {
+        alert('Stock agregado exitosamente.');
+        actualizarTabla();
+    } else {
+        alert('El equipo no fue encontrado.');
+    }
+
+    this.reset();
+});
+
+// Evento para manejar el envío del formulario de restar stock
+document.getElementById('restarStockForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombreEquipoRestar').value;
+    const cantidad = document.getElementById('cantidadRestar').value;
+
+    const exito = restarStock(nombre, cantidad);
+
+    if (exito) {
+        alert('Stock restado exitosamente.');
+        actualizarTabla();
+    } else {
+        alert('El equipo no fue encontrado o la cantidad es insuficiente.');
+    }
+
+    this.reset();
+});
+
+// Cuando la página cargue, se actualiza la tabla con los datos almacenados en el localStorage
+window.onload = function() {
+    actualizarTabla();
+};
+
+function llenarListaDesplegable() {
+    const selectAgregar = document.getElementById('nombreEquipoAgregar');
+    const selectRestar = document.getElementById('nombreEquipoRestar');
+    const selectRenta = document.getElementById('nombreEquipoRenta'); // Agregamos la referencia al select de "Registro de Rentas"
+    const selectConsulta = document.getElementById('nombreEquipoConsulta'); // Agregamos la referencia al select de "Consulta de Disponibilidad"
+    
+    // Limpiamos las listas desplegables
+    selectAgregar.innerHTML = '';
+    selectRestar.innerHTML = '';
+    selectRenta.innerHTML = ''; // Limpiamos la lista desplegable de "Registro de Rentas"
+    selectConsulta.innerHTML = ''; // Limpiamos la lista desplegable de "Consulta de Disponibilidad"
+    
+    // Obtenemos los equipos del localStorage
+    const equipos = obtenerEquiposLocalStorage();
+    
+    // Iteramos sobre los equipos y los agregamos a las listas desplegables
+    equipos.forEach(equipo => {
+        const option = document.createElement('option');
+        option.value = equipo.nombre;
+        option.textContent = equipo.nombre;
+        selectAgregar.appendChild(option.cloneNode(true));
+        selectRestar.appendChild(option.cloneNode(true));
+        selectRenta.appendChild(option.cloneNode(true)); // Agregamos el equipo a la lista desplegable de "Registro de Rentas"
+        selectConsulta.appendChild(option.cloneNode(true)); // Agregamos el equipo a la lista desplegable de "Consulta de Disponibilidad"
+    });
+}
+let rentas = [];
+
+// Función para registrar una nueva renta
+function registrarRenta(nombre, cantidad, monto, fecha, persona) {
+
+    rentas.push({
+        nombre: nombre,
+        cantidad: parseInt(cantidad),
+        monto: parseFloat(monto),
+        fecha: fecha,
+        persona: persona
+    });
+}
+
+// Función para buscar rentas por nombre de equipo y fecha
+// Función para buscar rentas por nombre de equipo y fecha, y obtener la cantidad rentada
+function buscarRenta(nombre, fecha) {
+    const rentasFiltradas = rentas.filter(renta => renta.nombre === nombre && renta.fecha === fecha);
+    const cantidadRentada = rentasFiltradas.reduce((total, renta) => total + renta.cantidad, 0);
+    return { rentas: rentasFiltradas, cantidadRentada };
+}
+
+document.getElementById('consultaDisponibilidadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombreEquipoConsulta').value;
+    const fecha = document.getElementById('fechaConsulta').value;
+
+    const { rentas, cantidadRentada } = buscarRenta(nombre, fecha);
+
+    const equipos = obtenerEquiposLocalStorage();
+    const equipoSeleccionado = equipos.find(equipo => equipo.nombre === nombre);
+    const stockTotal = equipoSeleccionado ? equipoSeleccionado.cantidad : 0;
+    const stockDisponible = stockTotal - cantidadRentada;
+
+    if (stockDisponible > 0) {
+        document.getElementById('resultadoConsulta').textContent = `Equipo disponible. Cantidad disponible: ${stockDisponible}`;
+    } else if (rentas.length > 0) {
+        document.getElementById('resultadoConsulta').textContent = `Equipo rentado. Cantidad disponible: 0`;
+    } else {
+        document.getElementById('resultadoConsulta').textContent = `Equipo fuera de stock. Cantidad disponible: 0`;
+    }
+});
+
+function obtenerRentasLocalStorage() {
+    const rentasString = localStorage.getItem('rentas');
+    return rentasString ? JSON.parse(rentasString) : [];
+}
+
+// Función para guardar las rentas en el localStorage
+function guardarRentasLocalStorage(rentas) {
+    localStorage.setItem('rentas', JSON.stringify(rentas));
+}
+
+// Cargar rentas almacenadas al cargar la página
+rentas = obtenerRentasLocalStorage();
+
+// Función para registrar una nueva renta
+function registrarRenta(nombre, cantidad, monto, fecha, persona) {
+    const renta = {
+        nombre: nombre,
+        cantidad: parseInt(cantidad),
+        monto: parseFloat(monto),
+        fecha: fecha,
+        persona: persona
+    };
+
+    rentas.push(renta);
+    guardarRentasLocalStorage(rentas);
+    return renta;
+}
+
+// Función para buscar rentas por nombre de equipo y fecha, y obtener la cantidad rentada
+function buscarRenta(nombre, fecha) {
+    const rentasFiltradas = rentas.filter(renta => renta.nombre === nombre && renta.fecha === fecha);
+    const cantidadRentada = rentasFiltradas.reduce((total, renta) => total + renta.cantidad, 0);
+    return { rentas: rentasFiltradas, cantidadRentada };
+}
+
+// Evento para manejar el envío del formulario de registro de rentas
+document.getElementById('registroRentasForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombreEquipoRenta').value;
+    const cantidad = document.getElementById('cantidadRenta').value;
+    const monto = document.getElementById('montoRenta').value;
+    const fecha = document.getElementById('fechaRenta').value;
+    const persona = document.getElementById('nombrePersona').value;
+
+    const nuevaRenta = registrarRenta(nombre, cantidad, monto, fecha, persona);
+
+    // Mostrar mensaje de éxito o error, o realizar alguna otra acción si es necesario
+
+    this.reset();
+});
+
+// Evento para manejar el envío del formulario de consulta de disponibilidad
+document.getElementById('consultaDisponibilidadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombreEquipoConsulta').value;
+    const fecha = document.getElementById('fechaConsulta').value;
+
+    const { rentas, cantidadRentada } = buscarRenta(nombre, fecha);
+
+    const equipos = obtenerEquiposLocalStorage();
+    const equipoSeleccionado = equipos.find(equipo => equipo.nombre === nombre);
+    const stockTotal = equipoSeleccionado ? equipoSeleccionado.cantidad : 0;
+    const stockDisponible = stockTotal - cantidadRentada;
+
+    if (stockDisponible > 0) {
+        document.getElementById('resultadoConsulta').textContent = `Equipo disponible. Cantidad disponible: ${stockDisponible}`;
+    } else if (rentas.length > 0) {
+        document.getElementById('resultadoConsulta').textContent = `Equipo rentado. Cantidad disponible: 0`;
+    } else {
+        document.getElementById('resultadoConsulta').textContent = `Equipo fuera de stock. Cantidad disponible: 0`;
+    }
+});
+
+function obtenerTodasRentas() {
+    return rentas;
+}
+
+// Función para mostrar el historial de rentas
+function mostrarHistorialRentas() {
+    const historialRentas = obtenerTodasRentas();
+    const historialRentasContainer = document.getElementById('historialRentasContainer');
+    historialRentasContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar las nuevas rentas
+
+    historialRentas.forEach(renta => {
+        const rentaElement = document.createElement('div');
+        rentaElement.textContent = `Nombre del equipo: ${renta.nombre}, Cantidad: ${renta.cantidad}, Monto: ${renta.monto}, Fecha: ${renta.fecha}, Persona: ${renta.persona}`;
+        historialRentasContainer.appendChild(rentaElement);
+    });
+}
+
+// Evento para manejar la consulta del historial de rentas
+document.getElementById('consultarHistorialRentas').addEventListener('click', function() {
+    mostrarHistorialRentas();
+});
+
+function descargarExcel() {
+    const historialRentas = obtenerTodasRentas();
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(historialRentas);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Historial de Rentas");
+
+    // Convertir el libro de trabajo a un archivo binario
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Crear un blob binario desde el buffer
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    // Crear un enlace para descargar el archivo Excel
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'historial_rentas.xlsx';
+    a.click();
+
+    // Liberar el objeto URL
+    window.URL.revokeObjectURL(url);
+}
+
+function descargarExcel() {
+        const rentasRef = firebase.database().ref('rentas');
+
+        rentasRef.once('value').then(snapshot => {
+            const historialRentas = snapshot.val();
+
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(historialRentas);
+
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Historial de Rentas");
+
+            // Convertir el libro de trabajo a un archivo binario
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+            // Crear un blob binario desde el buffer
+            const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+            // Crear un enlace para descargar el archivo Excel
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'historial_rentas.xlsx';
+            a.click();
+
+            // Liberar el objeto URL
+            window.URL.revokeObjectURL(url);
+        }).catch(error => {
+            console.error('Error al descargar el historial de rentas:', error);
+        });
+    }
+
+    function descargarPorMes(mes, año) {
+    const historialRentas = obtenerTodasRentas();
+    const rentasFiltradas = historialRentas.filter(renta => {
+        const rentaFecha = new Date(renta.fecha);
+        return rentaFecha.getMonth() === mes && rentaFecha.getFullYear() === año;
+    });
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(rentasFiltradas);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, `Rentas_${mes - 1}_${año}`);
+
+    // Convertir el libro de trabajo a un archivo binario
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Crear un blob binario desde el buffer
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+    // Crear un enlace para descargar el archivo Excel
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rentas_${mes + 1}_${año}.xlsx`;
+    a.click();
+
+    // Liberar el objeto URL
+    window.URL.revokeObjectURL(url);
+}
+
+document.getElementById('consultaPorMesForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const mes = parseInt(document.getElementById('mesConsulta').value);
+    const año = parseInt(document.getElementById('añoConsulta').value);
+
+    if (isNaN(mes) || isNaN(año) || mes < 0 || mes > 11 || año < 2000 || año > 2100) {
+        alert('Por favor, ingresa un mes válido (0-11) y un año válido.');
+    } else {
+        descargarPorMes(mes, año);
+    }
+});
+
+</script>
+</script>

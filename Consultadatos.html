@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro y Consulta de Datos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <img src="logoricer.png" alt="Descripción de la imagen" class="logo-ricer">
+
+
+        <div class="encabezado">
+        <button class="iniciocdg" onclick="window.location.href='principal.html'">Inicio</button>
+        <button class="cdg-rdg" onclick="window.location.href='Controldegastos.html'">Registro de Datos</button>
+        </div>
+
+        <div class="container">
+        <h2 id="titulo">Consulta de Datos</h2>
+
+        <div class="subtitulos">
+        <div class="consult-boxes">
+            <label for="selectCliente">Seleccione Cliente:</label>
+            <select id="selectCliente" onchange="buscarClientes()">
+                <option value="">Seleccionar Cliente</option>
+            </select><br>
+             <button onclick="eliminarCliente()">Eliminar Cliente</button><br>
+
+             <button onclick="buscarClientes()">Buscar</button><br>
+             
+
+            <label for="selectProyecto">Seleccione Proyecto:</label>
+            <select id="selectProyecto" onchange="buscarProyecto()">
+                <option value="">Seleccionar Proyecto</option>
+            </select><br>
+            <button onclick="eliminarProyecto()">Eliminar Proyecto</button><br>
+
+            <button onclick="buscarProyecto()">Buscar</button><br>
+             
+  
+        <h3>Consulta de Datos por Mes</h3>
+        <div class="consult-boxes">
+            <label for="selectMes">Seleccione Mes:</label>
+            <select id="selectMes">
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+
+                
+               
+            </select>
+            <button onclick="buscarMes()">Buscar</button><br>
+
+            <h3>Consulta de Datos por Área</h3>
+            <div class="consult-boxes">
+                <label for="selectArea">Seleccione Área:</label>
+                <select id="selectArea">
+                    <option value="Control">Control</option>
+                    <option value="Construcción">Construcción</option>
+                    <option value="Electricidad">Electricidad</option>
+                    <option value="Fabricación">Fabricación</option>
+                    <option value="Taller">Taller</option>
+                    <option value="General">General</option>
+                    <option value="Rentas">Rentas</option>
+                </select>
+                <button onclick="buscarArea()">Buscar</button><br>
+
+                <label for="facturadoConsulta">Filtrar por Factura:</label>
+                <select id="facturadoConsulta">
+                    <option value="">Todos</option>
+                    <option value="Si">Sí</option>
+                    <option value="No">No</option>
+                </select>
+                <button id="buscarButtonConsulta" onclick="buscarFactura()">Buscar</button>
+                <br>
+    
+            <div id="resultadoConsulta"></div>
+
+        </div>
+    </div>
+
+    </div>
+    
+
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+</body>
+</html>
+
+<script>
+   
+
+function eliminarCliente() {
+    var clienteSeleccionado = document.getElementById("selectCliente").value;
+
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+
+        datosGuardados = datosGuardados.filter(function (datos) {
+            return datos.cliente !== clienteSeleccionado;
+        });
+
+        localStorage.setItem("datos", JSON.stringify(datosGuardados));
+        actualizarClientes(); 
+        limpiarResultados(); 
+    }
+}
+
+function eliminarProyecto() {
+    var proyectoSeleccionado = document.getElementById("selectProyecto").value;
+
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+
+        datosGuardados = datosGuardados.filter(function (datos) {
+            return datos.proyecto !== proyectoSeleccionado;
+        });
+
+        localStorage.setItem("datos", JSON.stringify(datosGuardados));
+        actualizarProyectos(); 
+        limpiarResultados();
+    }
+}
+
+function eliminarArea() {
+    var AreaSeleccionada = document.getElementById("selectArea").value;
+
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+
+        datosGuardados = datosGuardados.filter(function (datos) {
+            return datos.area !== AreaSeleccionada;
+        });
+
+        localStorage.setItem("datos", JSON.stringify(datosGuardados));
+        actualizarListas();
+    }
+}
+
+
+    function actualizarProyectos() {
+    var selectProyecto = document.getElementById("selectProyecto");
+    selectProyecto.innerHTML = '<option value="">Seleccionar Proyecto</option>';
+
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+
+        var proyectos = {};
+        datosGuardados.forEach(function (datos) {
+            proyectos[datos.proyecto] = true;
+        });
+
+        Object.keys(proyectos).forEach(function (proyecto) {
+            var opcionProyecto = document.createElement("option");
+            opcionProyecto.text = proyecto;
+            selectProyecto.add(opcionProyecto);
+        });
+    }
+
+}
+
+function actualizarClientes() {
+        var selectCliente = document.getElementById("selectCliente");
+
+        selectCliente.innerHTML = '<option value="">Seleccionar Cliente</option>';
+
+        var datosGuardados = localStorage.getItem("datos");
+        if (datosGuardados) {
+            var datos = JSON.parse(datosGuardados);
+            var clientes = {};
+
+ 
+            datos.forEach(function (datos) {
+                clientes[datos.cliente] = true;
+            });
+
+
+            Object.keys(clientes).forEach(function (cliente) {
+                var opcionCliente = document.createElement("option");
+                opcionCliente.text = cliente;
+                selectCliente.add(opcionCliente);
+            });
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        actualizarClientes();
+    });
+ 
+    function buscarClientes() {
+    var clienteSeleccionado = document.getElementById("selectCliente").value;
+
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+
+        var datosFiltrados = datosGuardados.filter(function (datos) {
+            return (!clienteSeleccionado || datos.cliente === clienteSeleccionado);
+        });
+        localStorage.setItem("resultadosConsulta", JSON.stringify(datosFiltrados));
+        window.location.href = 'resultados .html';
+    }
+}
+  
+
+function buscarProyecto() {
+    var proyectoSeleccionado = document.getElementById("selectProyecto").value;
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+        var datosFiltrados = datosGuardados.filter(function (datos) {
+            return (!proyectoSeleccionado || datos.proyecto === proyectoSeleccionado);
+        });
+        localStorage.setItem("resultadosConsulta", JSON.stringify(datosFiltrados));
+        window.location.href = 'resultados .html';
+    }
+}
+
+function buscarMes() {
+    var mesSeleccionado = document.getElementById("selectMes").value;
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+        var datosFiltrados = datosGuardados.filter(function (datos) {
+            return (!mesSeleccionado || new Date(datos.fecha).getMonth() + 1 === parseInt(mesSeleccionado));
+        });
+        localStorage.setItem("resultadosConsulta", JSON.stringify(datosFiltrados));
+        window.location.href = 'resultados .html';
+    }
+}
+
+function buscarArea() {
+    var areaSeleccionada = document.getElementById("selectArea").value;
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+        var datosFiltrados = datosGuardados.filter(function (datos) {
+            return (!areaSeleccionada || datos.area === areaSeleccionada);
+        });
+  
+        localStorage.setItem("resultadosConsulta", JSON.stringify(datosFiltrados));
+        window.location.href = 'resultados .html';
+    }
+}
+
+function buscarFactura() {
+    var facturadoConsultaSeleccionado = document.getElementById("facturadoConsulta").value;
+    var datosGuardados = localStorage.getItem("datos");
+    if (datosGuardados) {
+        datosGuardados = JSON.parse(datosGuardados);
+        var datosFiltrados = datosGuardados.filter(function (datos) {
+            return (!facturadoConsultaSeleccionado || datos.facturado === facturadoConsultaSeleccionado);
+        });
+        localStorage.setItem("resultadosConsulta", JSON.stringify(datosFiltrados));
+        window.location.href = 'resultados .html';
+    }
+}
+
+        document.getElementById("selectCliente").addEventListener("change", function() {
+            limpiarResultados();
+        });
+
+        document.getElementById("selectProyecto").addEventListener("change", function() {
+            limpiarResultados();
+        });
+        let datosFiltrados = [];
+        function limpiarResultados() {
+            document.getElementById("resultadoConsulta").innerHTML = "";
+}  
+
+        
+        function mostrarResultados(resultados) {
+    var resultadoConsulta = document.getElementById("resultadoConsulta");
+    resultadoConsulta.innerHTML = "";
+
+    var sumaMontos = 0;
+
+    if (resultados.length > 0) {
+        var listaResultados = document.createElement("ul");
+
+        resultados.forEach(function (datos) {
+            sumaMontos += parseFloat(datos.monto);
+            var item = document.createElement("li");
+
+   
+            var facturadoText = datos.facturado ? `Facturado: ${datos.facturado}` : "No especificado";
+
+            item.textContent = `Cliente: ${datos.cliente}, Proyecto: ${datos.proyecto}, Proveedor: ${datos.proveedor}, Fecha: ${datos.fecha}, Área: ${datos.area}, Monto: ${datos.monto}, Facturado: ${facturadoText}`;
+            listaResultados.appendChild(item);
+        });
+
+        var totalMonto = document.createElement("p");
+        totalMonto.textContent = `Suma de montos: ${sumaMontos.toFixed(2)}`;
+        resultadoConsulta.appendChild(totalMonto);
+
+        resultadoConsulta.appendChild(listaResultados);
+    } else {
+        resultadoConsulta.textContent = "No se encontraron resultados.";
+    }
+}
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    actualizarClientes(); 
+    actualizarProyectos(); 
+ 
+});
+
+function limpiarResultados() {
+    document.getElementById("resultadoConsulta").innerHTML = "";
+    buscarDatos(); 
+}
+
+        actualizarListasConsulta();
+    
+    </script>
+</body>
+</html>  

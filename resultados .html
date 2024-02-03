@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados y Descarga</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <img src="logoricer.png" alt="Descripción de la imagen" class="logo-ricer">
+
+    <div class="encabezado">
+        <button onclick="window.location.href='principal.html'">Inicio</button>    
+        <button onclick="window.location.href='Controldegastos.html'">Registro de Datos</button>
+        <button onclick="window.location.href='Consultadatos.html'">Consulta de datos</button>    
+    </div>
+
+    <div class="containerresultados">
+        <div id="resultadoConsulta"></div><br>
+        <button id="botonDescargarExcel">Descargar Excel</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.3/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var resultadosGuardados = localStorage.getItem("resultadosConsulta");
+        if (resultadosGuardados) {
+            var resultados = JSON.parse(resultadosGuardados);
+            mostrarResultados(resultados);
+
+            const botonDescargarExcel = document.getElementById('botonDescargarExcel');
+            botonDescargarExcel.addEventListener('click', function() {
+                descargarExcel(resultados);
+            });
+        } else {
+            document.getElementById('resultadoConsulta').textContent = "No se encontraron resultados.";
+        }
+    });
+
+
+        function mostrarResultados(resultados) {
+            const resultadoConsulta = document.getElementById('resultadoConsulta');
+            var sumaMontos = 0;
+
+            if (resultados.length > 0) {
+                var listaResultados = document.createElement("ul");
+
+                resultados.forEach(function(datos) {
+                    sumaMontos += parseFloat(datos.monto);
+                    var item = document.createElement("li");
+                    var facturadoText = datos.facturado ? `Facturado: ${datos.facturado}` : "No especificado";
+                    item.textContent = `Cliente: ${datos.cliente}, Proyecto: ${datos.proyecto}, Proveedor: ${datos.proveedor}, Fecha: ${datos.fecha}, Área: ${datos.area}, Monto: ${datos.monto}, Facturado: ${facturadoText}`;
+                    listaResultados.appendChild(item);
+                });
+
+                var totalMonto = document.createElement("p");
+                totalMonto.textContent = `Suma de montos: ${sumaMontos.toFixed(2)}`;
+                resultadoConsulta.appendChild(totalMonto);
+                resultadoConsulta.appendChild(listaResultados);
+            } else {
+                resultadoConsulta.textContent = "No se encontraron resultados.";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+        actualizarClientes(); 
+        actualizarProyectos(); 
+ 
+});
+
+function limpiarResultados() {
+    document.getElementById("resultadoConsulta").innerHTML = "";
+    buscarDatos(); 
+}
+
+        actualizarListasConsulta();
+
+        function descargarExcel(resultados) {
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.json_to_sheet(resultados);
+            var sumaMontos = resultados.reduce((total, resultado) => total + parseFloat(resultado.monto), 0);
+            XLSX.utils.sheet_add_aoa(ws, [[], ["Suma de montos:", sumaMontos.toFixed(2)]], {origin: -1});
+            XLSX.utils.book_append_sheet(wb, ws, "Resultados");
+            XLSX.writeFile(wb, "resultados.xlsx");
+        }
+    </script>
+</body>
+</html>

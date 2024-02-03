@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir datos a Azure Blob Storage</title>
+</head>
+<body>
+    <script src="https://unpkg.com/@azure/storage-blob"></script>
+    <script>
+        const accountName = ricer;
+        const accountKey = haMpa6ELJygArr5KzqbqwAeiwhlBUjwnBDSf5MDR/psqaAp3VdhKPGsXc6M1T3IK3RXaS4ZkwfM/+AStIpdoPA;
+        const containerName = ricer;
+        
+        // Crea una instancia de BlobServiceClient con las credenciales
+        const blobServiceClient = new Azure.StorageBlob.BlobServiceClient(
+            `https://${accountName}.blob.core.windows.net`,
+            new Azure.StorageSharedKeyCredential(accountName, accountKey)
+        );
+        
+        // Obtiene los datos del localStorage
+        const localStorageData = localStorage.getItem('tuClaveLocalStorage');
+        
+        // Sube los datos a Azure Blob Storage
+        async function uploadToAzureStorage() {
+            const containerClient = blobServiceClient.getContainerClient(containerName);
+            const blobName = ricer;
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+            await blockBlobClient.upload(localStorageData, localStorageData.length);
+            console.log('Datos subidos correctamente a Azure Blob Storage');
+        }
+        
+        uploadToAzureStorage().catch((error) => {
+            console.error('Error al subir los datos a Azure Blob Storage:', error);
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,294 @@
+#titulo{
+    font-family: Montserrat, sans-serif; /* Cambia el tipo de letra */
+    color: #d4d9ee; /* Cambia el color del texto (en este caso, un tono oscuro de gris) */
+    font-size: 200%; /* Cambia el tamaño del texto */
+    font-weight: bold; /* Añade negrita al texto */
+    text-align: center; /* Centra el texto */
+    margin-top: 30px; /* Añade un margen superior para separarlo del resto del contenido */
+}
+
+
+.encabezado img{
+
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-left: 0%;
+   
+}
+
+.logo-ricer {
+    position: absolute; /* Permite posicionar la imagen de forma absoluta */
+    top: 50; /* La imagen estará en la parte superior */
+    left: 50; /* La imagen estará en la parte izquierda */
+    width: 8%; /* Ancho de la imagen */
+    height: auto; /* Altura ajustada automáticamente */
+  }
+
+.container {
+    top: 15%;
+    left: 40%;
+    text-align: center;
+    position: absolute;
+    font-size: 100%;
+}
+
+.subtitulos{
+    font-size: 120%;
+    font-weight: bold;
+    color: #000a27;
+}
+
+.user {
+
+    color:#ebecff;
+    font-size: 50px;
+}
+
+.userandpaswword {
+
+    color:#ebecff;
+    font-size: 20px;
+}
+
+
+h1, h2 {
+    font-family: Arial, sans-serif;
+}
+
+input[type="text"],
+input[type="number"],
+button {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.encabezado {
+    position: absolute;
+    top: 10%;
+    right: 5%;
+}
+
+.encabezado button {
+    font-family: Montserrat, sans-serif;
+    margin-left: 10px;
+    background-color: transparent;
+    color: #fdfdfd;
+    border: none;
+    cursor: pointer;
+    font-size: 200%;
+    font-weight: bold; /* Añade negrita al texto */
+
+}
+
+.encabezado button:nth-child(2) {
+    margin-left: 30px; /* Ajusta este valor según sea necesario para aumentar el espacio */
+}
+.encabezado button:hover{
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 2s ease; /* Agregado transition para background-color */
+    transform: scale(1.1);
+}
+
+#guardardatos{
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 2s ease; /* Agregado transition para background-color */
+    z-index: 2;
+    width: 150px; 
+    height: 40px;
+    font-size: 20px; 
+    margin: 2%;
+    border-radius: 15px; 
+    border: 2px transparent; 
+    font-family: "Arial Black", Arial, sans-serif;
+    margin-bottom: -40%;
+}
+
+#buscar{
+    opacity: 0.9;
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 2s ease; /* Agregado transition para background-color */
+    z-index: 2;
+    width: 100px; 
+    height: 30px;
+    font-size: 15px; 
+    margin: 2%;
+    border-radius: 10px; 
+    border: 2px transparent; 
+    font-family: "Arial Black", Arial, sans-serif;
+    margin-bottom: -40%;
+}
+
+
+#guardardatos:hover{
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 2s ease; /* Agregado transition para background-color */
+    transform: scale(1.1);
+    background-color: #aab7ff;
+}
+
+
+
+.iniciordc {
+    position: absolute;
+    top: 90%;
+    left: 63%;
+    transform: translate(690%, -200%);
+    padding: 50px 50px;
+    background-color:transparent; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+body {
+    background: linear-gradient(to bottom right, #001244, #99ccff); /* Define un gradiente de colores */
+    width: 100%; /* Ancho del contenedor */
+    height: 110vh; /* Altura del contenedor */
+    position: relative;
+}
+
+input[type="text"],
+select {
+  width: 100%; /* Ancho del 100% del contenedor */
+  box-sizing: border-box; /* Incluye el padding y border en el ancho */
+  padding: 8px; /* Espaciado interno */
+  margin-bottom: 5px; /* Espacio inferior entre elementos */
+  font-size: medium;
+  border: 1px solid #ccc; /* Borde con color gris claro */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 16px; /* Tamaño de fuente */
+  outline: none; /* Elimina el borde de enfoque */
+}
+
+input[type="number"],
+select {
+  width: 100%; /* Ancho del 100% del contenedor */
+  box-sizing: border-box; /* Incluye el padding y border en el ancho */
+  padding: 8px; /* Espaciado interno */
+  margin-bottom: 5px; /* Espacio inferior entre elementos */
+  border: 1px solid #ccc; /* Borde con color gris claro */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 16px; /* Tamaño de fuente */
+  outline: none; /* Elimina el borde de enfoque */
+}
+
+input[type="date"],
+select {
+  width: 100%; /* Ancho del 100% del contenedor */
+  box-sizing: border-box; /* Incluye el padding y border en el ancho */
+  padding: 8px; /* Espaciado interno */
+  margin-bottom: 5px; /* Espacio inferior entre elementos */
+  border: 1px solid #ccc; /* Borde con color gris claro */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 16px; /* Tamaño de fuente */
+  outline: none; /* Elimina el borde de enfoque */
+}
+
+input[type="password"],
+select {
+  width: 100%; /* Ancho del 100% del contenedor */
+  box-sizing: border-box; /* Incluye el padding y border en el ancho */
+  padding: 8px; /* Espaciado interno */
+  margin-bottom: 5px; /* Espacio inferior entre elementos */
+  border: 1px solid #ccc; /* Borde con color gris claro */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 16px; /* Tamaño de fuente */
+  outline: none; /* Elimina el borde de enfoque */
+}
+
+
+#buscarButton {
+    margin-bottom: 5px; /* Reducir el margen inferior del botón de búsqueda */
+}
+
+h3 {
+    margin-top: 5px; /* Reducir el margen superior del título "Consulta de Datos por Mes" */
+    margin-bottom: 5px;
+}
+
+.logo {
+    width: 40%;
+    height: 60%;
+    display: block;
+    margin: auto; 
+    margin-bottom: 30%;
+    opacity: 0.2;
+  }
+
+  .containerprincipal {
+    position: absolute;
+    top: 50%; /* Centra verticalmente */
+    left: 50%; /* Centra horizontalmente */
+    transform: translate(-50%, -50%); /* Centra el contenedor */
+    width: fit-content; /* Ajusta el ancho al contenido */
+    height: fit-content; /* Ajusta la altura al contenido */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-containerprincipal {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%; /* Ajusta el ancho al 100% del contenedor padre */
+}
+
+.botonn {
+    opacity: 0.9;
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 2s ease; /* Agregado transition para background-color */
+    width: 300px;
+    height: 80px;
+    font-size: 27px;
+    margin: 20px;
+    border-radius: 10px;
+    border: 5px transparent;
+    font-family: "Arial Black", Arial, sans-serif;
+}
+
+#rdg {
+    background-color: #ccdeff;
+    color: #03000e;
+}
+
+#cdg {
+    background-color: #ccdeff;
+    color: #03000e;
+}
+
+#rdp {
+    background-color: #ccdeff;
+    color: #03000e;
+}
+
+#rdc {
+    background-color: #ccdeff;
+    color: #03000e;
+}
+
+#rdg:hover,
+#cdg:hover,
+#rdp:hover,
+#rdc:hover {
+    background-color: #000a38; 
+    color: #ccdeff;
+    transform: scale(1.1);
+}
+
+.containerresultados {
+    top: 20%;
+    left: 10%;
+    text-align: left;
+    position: absolute;
+    font-size: 100%;
+    color: #99ccff;
+    font-size: 120%;
+}
+
+.container-rdp {
+    top: 15%;
+    left: 20%;
+    text-align: center;
+    position: absolute;
+    font-size: 100%;
+}
